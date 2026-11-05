@@ -1,0 +1,30 @@
+# Never commit game data, system software or anything derived from them
+game/
+work/
+save/
+*.bin
+*.rsrc
+*.dsk
+*.img
+*.image
+*.sit
+*.sea
+*.dmg
+*.hqx
+*.ROM
+ghidra_out*/
+ghidra_proj/
+assets_out/
+
+# build output
+hle/build/
+hle/b/
+build/
+__pycache__/
+*.pyc
+*.pbm
+*.pdb
+*.obj
+*.exe
+*.ilk
+*.res

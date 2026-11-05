@@ -1,0 +1,8 @@
+# Ghidra names for tools/ghidra/run_combined.sh. Tab-separated: address<TAB>name<TAB>G|F
+# Addresses use the combined layout: CODE n at 0x100000 + n*0x10000 (offsets include the
+# 4-byte segment header); globals are 0x800000 - (A5 offset).
+# F = function, G = global/label. Only add names you have traced; note evidence in PORT_NOTES.md.
+# Examples (from Falcon MC):
+0x11740A	sinCos	F
+0x1F1522	sceneDrawDispatch	F
+0x7FA8C0	g_frameTick	G
