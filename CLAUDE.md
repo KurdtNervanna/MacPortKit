@@ -1,8 +1,11 @@
 # CLAUDE.md
 
-This repository is a toolkit for porting classic 68k Macintosh software. The agent
-playbook is **[AGENTS.md](AGENTS.md)** — read it before doing anything, and read
-[docs/gotchas.md](docs/gotchas.md) before debugging a port.
+This repository is a toolkit for porting classic 68k Macintosh software.
+
+**If you are helping someone port a game with this kit, your manual is
+[AGENTS.md](AGENTS.md).** Read its "TL;DR — what you are doing" section first, then the
+rest, and keep [docs/gotchas.md](docs/gotchas.md) open while debugging. Follow it; the
+notes below are only for editing this kit itself.
 
 Quick facts for working *on this kit itself*:
 

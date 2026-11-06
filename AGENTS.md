@@ -7,6 +7,50 @@ cost hours. Read it fully once, then keep `docs/gotchas.md` open while debugging
 
 ---
 
+## TL;DR — what you are doing
+
+Port the program by **running its original 68k code on the Musashi CPU core in `hle/`
+and re-implementing, in C, each Mac Toolbox/OS "trap" it calls** (high-level
+emulation). You do *not* rewrite the game and you do *not* decompile the whole thing
+first. You extend the runtime in `hle/` one trap at a time until the game runs right.
+
+**The whole job is this loop:** run the game headless with a script → look at the
+screen dump and log → find the *first* thing that is wrong → explain it from evidence
+→ fix the matching trap/behaviour in the right `hle/src` file → rebuild → re-run the
+*same* script → compare → write it in `PORT_NOTES.md` → commit. Repeat.
+
+**Minimum path to "it boots" (do this in the first session):**
+
+```
+pip install capstone
+python tools/macres/rfork.py        info  <app>          # is it a 68k app? what's inside?
+python tools/macres/code_extract.py <app> work/          # segments, jump table, compiler
+python tools/analysis/trap_audit.py <app>                # traps the runtime doesn't handle yet
+# copy hle/ into a new port folder, edit its src/config.h for this game, then:
+cd <port>/hle && cmd /c ".\build.bat"                    # Windows; cmake on macOS/Linux
+build\hle.exe "<folder with the app + a System file>"
+```
+
+**The five rules you break at your peril** (full reasons below and in `docs/gotchas.md`):
+1. Fix the **first** wrong thing, not the most visible — a stack skew surfaces far away.
+2. **Read the actual call site** (`tools/analysis/disasm.py <app> find <WORD>`) before
+   implementing a trap; never guess the signature or pop count.
+3. **Verify, don't assume** — rebuild from PowerShell, re-run the script, *look at the
+   picture*, and say what you did not verify.
+4. **The original code is the spec** — don't "fix" the game to get past a bug; find the
+   HLE bug. Patches to game code are last resort, switchable, never to the user's file.
+5. **Never publish, push, or go public without the human's explicit OK**, and never
+   commit game data, decompiler output, or extracted assets.
+
+**Report to the human after recon, and stop to ask them** at product decisions (which
+platforms, faithful vs. enhanced, when to publish) and whenever you're missing a file
+only they can provide. Everything else: keep going.
+
+New to this codebase? Read `docs/00-strategy.md` (why HLE) and `docs/04-hle-runtime.md`
+(how the runtime is built) before your first edit. The rest of this file is the detail.
+
+---
+
 ## 0. First session checklist
 
 1. **Find out what the human has.** The game file(s) in some container (`.sit`,
